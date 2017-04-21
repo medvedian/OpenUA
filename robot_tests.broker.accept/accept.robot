@@ -55,7 +55,7 @@ Login
 
 Підготувати дані для оголошення тендера
   [Arguments]  ${username}  ${tender_data}  ${items}
-    ${tender_data}=       adapt_data         ${tender_data}
+    run keyword if  '${username}' == 'accOwner'      ${tender_data}=       adapt_data         ${tender_data}
     [return]    ${tender_data}
 
 Створити тендер
@@ -966,7 +966,7 @@ Login
   # Лоти закупівлі
   Execute Javascript    $(angular.element("md-tab-item")[1]).click()
   # +Додати
-  wait until page contains element  id=lotDocumentAddAction    60
+  sleep  3
   execute javascript  angular.element("#lotDocumentAddAction").click()
   sleep  10
   #Вибір тендерної документації з переліка
@@ -1563,15 +1563,10 @@ Login
   log to console  ${ARGUMENTS[3]}
   log to console  *
   go to  ${ViewTenderUrl}
-  sleep  5
-  Wait Until Page Contains Element    xpath=(//button[starts-with(@ng-click, "onBidDocumentAdd")])[1]
-  focus                               xpath=(//button[starts-with(@ng-click, "onBidDocumentAdd")])[1]
-  sleep  5
-  Click element    xpath=(.//button[@ng-if='vm.allowEditBidDocuments'])[1]
-  Sleep  3
-  focus  id=description-bid-documents
-  sleep  3
-  input text                    id=description-bid-documents              PLACEHOLDER_2
+  sleep  10
+  execute javascript  $($("ng-form[name='bidForm']").find("button[ng-if='vm.allowEditBidDocuments']")[0]).trigger('click')
+  focus   xpath=.//span[@class='upper-case-block-label ng-binding']
+  sleep   5
   select from list by value     id=type-bid-documents                     commercialProposal
   sleep  2
   Choose file     id=file-bid-documents    ${ARGUMENTS[2]}
