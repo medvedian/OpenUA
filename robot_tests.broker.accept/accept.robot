@@ -55,8 +55,16 @@ Login
 
 Підготувати дані для оголошення тендера
   [Arguments]  ${username}  ${tender_data}  ${items}
-    run keyword if  '${username}' == 'accOwner'      ${tender_data}=       adapt_data         ${tender_data}
-    [return]    ${tender_data}
+  run keyword if  '${username}' == 'accept_Owner'      Підготувати тендер дату    ${tender_data}
+#    log to console  *
+#    log to console  ${tender_data}
+#    log to console  *
+  [return]    ${tender_data}
+
+Підготувати тендер дату
+  [Arguments]  ${tender_data}
+  ${tender_data}=       adapt_data         ${tender_data}
+  set global variable  ${tender_data}
 
 Створити тендер
   [Arguments]  @{ARGUMENTS}
@@ -1520,14 +1528,16 @@ Login
 
   Wait Until Page Contains Element    xpath=(.//button[@ng-if='vm.allowEditBidDocuments'])[1]
   focus                               xpath=(.//button[@ng-if='vm.allowEditBidDocuments'])[1]
-  sleep  2
+  sleep  5
   focus                               xpath=(.//button[@ng-if='vm.allowEditBidDocuments'])[1]
-  sleep  2
+  sleep  5
   Click element                       xpath=(.//button[@ng-if='vm.allowEditBidDocuments'])[1]
   Sleep  5
   focus  id=description-bid-documents
-  sleep  2
+  sleep  5
   input text                    id=description-bid-documents              PLACEHOLDER
+  focus  id=type-bid-documents
+  sleep  5
   select from list by value     id=type-bid-documents                     ${bid_doc_type}
   sleep  2
   Choose file     id=file-bid-documents    ${ARGUMENTS[1]}
@@ -1629,12 +1639,16 @@ Login
   Sleep    10
   ${title}=        Get From Dictionary  ${ARGUMENTS[2].data}  title
   ${description}=  Get From Dictionary  ${ARGUMENTS[2].data}  description
-  Wait Until Page Contains Element   xpath=//ng-form[@name='questionForm'][1]//button[@ng-click='toggleView()']
+  wait until element is visible   xpath=//ng-form[@name='questionForm'][1]//button[@ng-click='toggleView()']  30
+  focus  xpath=//ng-form[@name='questionForm'][1]//button[@ng-click='toggleView()']
+  sleep  3
   Click element     xpath=//ng-form[@name='questionForm'][1]//button[@ng-click='toggleView()']
   Sleep    5s
   input text       id=title          ${title}
   input text       id=description    ${description}
-  Sleep    10
+  Sleep    5
+  focus  xpath=//ng-form[@name='questionForm'][1]//button[@ng-click='createQuestion()']
+  sleep  5
   Click element     xpath=//ng-form[@name='questionForm'][1]//button[@ng-click='createQuestion()']
   Sleep    20
 
@@ -1668,8 +1682,10 @@ Login
     ...      ${ARGUMENTS[1]} ==  ${TENDER['TENDER_UAID']}
     Go to    ${ViewTenderUrl}
     Sleep    10
-    Wait Until Page Contains Element    xpath=.//div/a[@target='_blank']   60
-    ${result} =   Get Element Attribute    xpath=.//div/a[@target='_blank']@href
+    Wait Until Page Contains Element    xpath=(.//div/a[@target='_blank'])[1]   60
+    ${result} =   Get Element Attribute    xpath=(.//div/a[@target='_blank'])[1]@href
+    log to console  *
+    log to console  result = ${result}
     [return]   ${result}
 
 Отримати посилання на аукціон для учасника
@@ -1680,8 +1696,10 @@ Login
     ...      ${ARGUMENTS[1]} ==  ${TENDER['TENDER_UAID']}
     Go to    ${ViewTenderUrl}
     Sleep    10
-    Wait Until Page Contains Element    xpath=.//div/a[@target='_blank']   60
-    ${result} =   Get Element Attribute    xpath=.//div/a[@target='_blank']@href
+    Wait Until Page Contains Element    xpath=(.//div/a[@target='_blank'])[1]   60
+    ${result} =   Get Element Attribute    xpath=(.//div/a[@target='_blank'])[1]@href
+    log to console  *
+    log to console  result = ${result}
     [return]   ${result}
 
 ########################################################################################################################
